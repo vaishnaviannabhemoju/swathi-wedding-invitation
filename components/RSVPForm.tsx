@@ -2,6 +2,9 @@
 
 import { FormEvent, useState } from "react";
 
+const MIN_GUESTS = 1;
+const MAX_GUESTS = 50;
+
 export default function RSVPForm() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -12,10 +15,7 @@ export default function RSVPForm() {
     email: "",
     attending: true,
     guest_count: 1,
-    guest_names: "",
     events: [] as string[],
-    meal_preference: "",
-    dietary_restrictions: "",
     message: "",
   });
 
@@ -39,6 +39,11 @@ export default function RSVPForm() {
     });
   };
 
+  const setGuestCount = (value: number) => {
+    const next = Math.min(MAX_GUESTS, Math.max(MIN_GUESTS, value));
+    updateField("guest_count", next);
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -52,7 +57,17 @@ export default function RSVPForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          guest_name: form.guest_name,
+          email: form.email || null,
+          attending: form.attending,
+          guest_count: form.attending ? form.guest_count : 0,
+          guest_names: null,
+          events: form.attending ? form.events : [],
+          meal_preference: null,
+          dietary_restrictions: null,
+          message: form.message || null,
+        }),
       });
 
       const data = await response.json();
@@ -68,10 +83,7 @@ export default function RSVPForm() {
         email: "",
         attending: true,
         guest_count: 1,
-        guest_names: "",
         events: [],
-        meal_preference: "",
-        dietary_restrictions: "",
         message: "",
       });
     } catch (err) {
@@ -91,7 +103,7 @@ export default function RSVPForm() {
         <p>
           Your RSVP has been received.
           <br />
-          We can't wait to celebrate with you!
+          We can&apos;t wait to celebrate with you!
         </p>
 
         <button className="submit-button" onClick={() => setSuccess(false)}>
@@ -117,7 +129,9 @@ export default function RSVPForm() {
       </div>
 
       <div className="form-group">
-        <label htmlFor="email">Email Address</label>
+        <label htmlFor="email">
+          Email Address <span className="optional-label">(optional)</span>
+        </label>
 
         <input
           id="email"
@@ -159,32 +173,42 @@ export default function RSVPForm() {
           <div className="form-group">
             <label htmlFor="guest_count">Number of Guests</label>
 
-            <select
-              id="guest_count"
-              value={form.guest_count}
-              onChange={(e) =>
-                updateField("guest_count", Number(e.target.value))
-              }
-            >
-              <option value={1}>1 Guest</option>
-              <option value={2}>2 Guests</option>
-              <option value={3}>3 Guests</option>
-              <option value={4}>4 Guests</option>
-              <option value={5}>5 Guests</option>
-              <option value={6}>6 Guests</option>
-            </select>
-          </div>
+            <div className="guest-count-stepper">
+              <button
+                type="button"
+                className="guest-count-step"
+                aria-label="Decrease guests"
+                disabled={form.guest_count <= MIN_GUESTS}
+                onClick={() => setGuestCount(form.guest_count - 1)}
+              >
+                −
+              </button>
 
-          <div className="form-group">
-            <label htmlFor="guest_names">Names of Other Guests</label>
+              <input
+                id="guest_count"
+                type="number"
+                min={MIN_GUESTS}
+                max={MAX_GUESTS}
+                inputMode="numeric"
+                className="guest-count-input"
+                value={form.guest_count}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  if (Number.isNaN(value)) return;
+                  setGuestCount(value);
+                }}
+              />
 
-            <input
-              id="guest_names"
-              type="text"
-              placeholder="e.g. Priya, Anil"
-              value={form.guest_names}
-              onChange={(e) => updateField("guest_names", e.target.value)}
-            />
+              <button
+                type="button"
+                className="guest-count-step"
+                aria-label="Increase guests"
+                disabled={form.guest_count >= MAX_GUESTS}
+                onClick={() => setGuestCount(form.guest_count + 1)}
+              >
+                +
+              </button>
+            </div>
           </div>
 
           <div className="form-group">
@@ -204,40 +228,14 @@ export default function RSVPForm() {
               ))}
             </div>
           </div>
-
-          <div className="form-group">
-            <label htmlFor="meal_preference">Meal Preference</label>
-
-            <select
-              id="meal_preference"
-              value={form.meal_preference}
-              onChange={(e) => updateField("meal_preference", e.target.value)}
-            >
-              <option value="">Select preference</option>
-              <option value="Vegetarian">Vegetarian</option>
-              <option value="Non-Vegetarian">Non-Vegetarian</option>
-              <option value="Vegan">Vegan</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="dietary_restrictions">Dietary Restrictions</label>
-
-            <input
-              id="dietary_restrictions"
-              type="text"
-              placeholder="Please let us know"
-              value={form.dietary_restrictions}
-              onChange={(e) =>
-                updateField("dietary_restrictions", e.target.value)
-              }
-            />
-          </div>
         </>
       )}
 
       <div className="form-group">
-        <label htmlFor="message">Message for the Couple</label>
+        <label htmlFor="message">
+          Message for the Couple{" "}
+          <span className="optional-label">(optional)</span>
+        </label>
 
         <textarea
           id="message"
