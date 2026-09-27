@@ -170,19 +170,20 @@ img {
   opacity: 0.7;
 }
 
-/* Mobile: fit full image width so sides aren't cropped */
+/* Mobile: fill the full hero section (same cover behavior as desktop) */
 @media (max-width: 639px) {
   .hero-photo {
-    object-fit: contain;
-    object-position: center center;
+    object-fit: cover;
+    object-position: center 30%;
+    opacity: 0.7;
   }
 
   .hero-overlay {
     background: linear-gradient(
       180deg,
-      hsla(38, 48%, 94%, 0.7) 0%,
-      hsla(38, 42%, 92%, 0.55) 45%,
-      hsla(38, 48%, 94%, 0.75) 100%
+      hsla(38, 48%, 94%, 0.72) 0%,
+      hsla(38, 42%, 92%, 0.58) 45%,
+      hsla(38, 48%, 94%, 0.78) 100%
     );
   }
 }
