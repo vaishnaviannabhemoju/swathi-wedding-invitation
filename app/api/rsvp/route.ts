@@ -5,17 +5,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const {
-      guest_name,
-      email,
-      attending,
-      guest_count,
-      guest_names,
-      events,
-      meal_preference,
-      dietary_restrictions,
-      message,
-    } = body;
+    const { guest_name, email, attending, guest_count, message } = body;
 
     if (!guest_name || typeof attending !== "boolean") {
       return NextResponse.json(
@@ -24,16 +14,12 @@ export async function POST(request: Request) {
       );
     }
 
-    const { error } = await supabaseServer.from("wedding_rsvps").insert({
+    const { error } = await supabaseServer.from("wedding_reception_rsvps").insert({
       guest_name,
-      email,
+      email: email || null,
       attending,
-      guest_count,
-      guest_names,
-      events,
-      meal_preference,
-      dietary_restrictions,
-      message,
+      guest_count: attending ? (guest_count ?? 1) : 0,
+      message: message || null,
     });
 
     if (error) {

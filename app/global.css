@@ -167,7 +167,7 @@ img {
 .hero-photo {
   object-fit: cover;
   object-position: center 50%;
-  opacity: 0.85;
+  opacity: 0.7;
 }
 
 /* Mobile: fit full image width so sides aren't cropped */
@@ -217,27 +217,33 @@ img {
   align-items: center;
   justify-content: center;
   gap: 0.15rem;
-  background: linear-gradient(145deg, #fff8ec, #f0e0c4);
-  border: 2px solid rgba(139, 21, 39, 0.3);
-  box-shadow: 0 8px 32px rgba(36, 20, 14, 0.14);
+  background: linear-gradient(135deg, var(--burgundy), var(--gold-bright));
+  border: 2px solid rgba(255, 246, 214, 0.55);
+  box-shadow:
+    0 8px 28px rgba(139, 21, 39, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
   font-family: var(--font-display);
-  font-size: 1.35rem;
-  color: var(--burgundy);
+  font-size: 1.65rem;
+  color: #fff6d6;
   animation: floatAnim 5s ease-in-out infinite;
 }
 
 .monogram-amp {
-  color: var(--gold);
+  color: #ffe9a0;
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 1rem;
+  font-size: 1.2rem;
 }
 
 @media (min-width: 640px) {
   .monogram {
     width: 6rem;
     height: 6rem;
-    font-size: 1.6rem;
+    font-size: 2rem;
+  }
+
+  .monogram-amp {
+    font-size: 1.4rem;
   }
 }
 
@@ -832,8 +838,8 @@ img {
 }
 
 .event-card--reception {
-  background: linear-gradient(145deg, #0f3d32, #1a5c4a);
-  border: 1.5px solid rgba(212, 175, 55, 0.4);
+  background: linear-gradient(145deg, #6e0f1c, #8b1527 45%, #a0720a);
+  border: 1.5px solid rgba(212, 175, 55, 0.45);
 }
 
 .event-card--reception .event-accent {
@@ -841,11 +847,11 @@ img {
 }
 
 .event-card--reception .event-icon {
-  background: rgba(212, 175, 55, 0.14);
+  background: rgba(212, 175, 55, 0.16);
 }
 
 .event-card--reception h3 {
-  color: #d4af37;
+  color: #f0d78c;
 }
 
 .event-card--reception .event-date,
@@ -863,12 +869,12 @@ img {
 }
 
 .event-card--reception .event-rule {
-  background: rgba(212, 175, 55, 0.18);
+  background: rgba(212, 175, 55, 0.2);
 }
 
 .event-card--reception .dress-code {
-  background: rgba(212, 175, 55, 0.1);
-  border: 1px solid rgba(212, 175, 55, 0.25);
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.28);
 }
 
 .event-card--reception .event-description {

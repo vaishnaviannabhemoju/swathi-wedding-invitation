@@ -39,9 +39,9 @@ export default function WeddingInvitation() {
       {/* HERO */}
       <section className="hero">
         <div className="hero-bg" aria-hidden="true">
-          {/* Photo: public/images/background.jpg */}
+          {/* Photo: public/images/shiva-parvathi.jpg */}
           <Image
-            src="/images/background.jpg"
+            src="/images/shiva-parvathi.jpg"
             alt=""
             fill
             priority

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Italiana, Jost } from "next/font/google";
-import "./globals.css";
 import "./global.css";
+import "./globals.css";
 
 const italiana = Italiana({
   weight: "400",
