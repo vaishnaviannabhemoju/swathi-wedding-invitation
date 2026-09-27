@@ -5,7 +5,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const { guest_name, email, attending, guest_count, message } = body;
+    const { guest_name, email, attending, guest_count, events, message } = body;
 
     if (!guest_name || typeof attending !== "boolean") {
       return NextResponse.json(
@@ -14,13 +14,31 @@ export async function POST(request: Request) {
       );
     }
 
-    const { error } = await supabaseServer.from("wedding_reception_rsvps").insert({
-      guest_name,
-      email: email || null,
-      attending,
-      guest_count: attending ? (guest_count ?? 1) : 0,
-      message: message || null,
-    });
+    const selectedEvents = Array.isArray(events)
+      ? events.filter(
+          (event): event is string =>
+            typeof event === "string" &&
+            (event === "Wedding" || event === "Reception"),
+        )
+      : [];
+
+    if (attending && selectedEvents.length === 0) {
+      return NextResponse.json(
+        { error: "Please select at least one event." },
+        { status: 400 },
+      );
+    }
+
+    const { error } = await supabaseServer
+      .from("wedding_reception_rsvps")
+      .insert({
+        guest_name,
+        email: email || null,
+        attending,
+        guest_count: attending ? (guest_count ?? 1) : 0,
+        events: attending ? selectedEvents : [],
+        message: message || null,
+      });
 
     if (error) {
       console.error("Supabase error:", error);

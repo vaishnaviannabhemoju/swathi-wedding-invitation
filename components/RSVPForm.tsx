@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 
 const MIN_GUESTS = 1;
 const MAX_GUESTS = 50;
+const EVENT_OPTIONS = ["Wedding", "Reception"] as const;
 
 export default function RSVPForm() {
   const [loading, setLoading] = useState(false);
@@ -15,6 +16,7 @@ export default function RSVPForm() {
     email: "",
     attending: true,
     guest_count: 1,
+    events: [] as string[],
     message: "",
   });
 
@@ -25,6 +27,19 @@ export default function RSVPForm() {
     }));
   };
 
+  const toggleEvent = (event: string) => {
+    setForm((previous) => {
+      const exists = previous.events.includes(event);
+
+      return {
+        ...previous,
+        events: exists
+          ? previous.events.filter((item) => item !== event)
+          : [...previous.events, event],
+      };
+    });
+  };
+
   const setGuestCount = (value: number) => {
     const next = Math.min(MAX_GUESTS, Math.max(MIN_GUESTS, value));
     updateField("guest_count", next);
@@ -32,6 +47,11 @@ export default function RSVPForm() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (form.attending && form.events.length === 0) {
+      setError("Please select at least one event.");
+      return;
+    }
 
     setLoading(true);
     setError("");
@@ -48,6 +68,7 @@ export default function RSVPForm() {
           email: form.email || null,
           attending: form.attending,
           guest_count: form.attending ? form.guest_count : 0,
+          events: form.attending ? form.events : [],
           message: form.message || null,
         }),
       });
@@ -65,6 +86,7 @@ export default function RSVPForm() {
         email: "",
         attending: true,
         guest_count: 1,
+        events: [],
         message: "",
       });
     } catch (err) {
@@ -150,46 +172,66 @@ export default function RSVPForm() {
       </div>
 
       {form.attending && (
-        <div className="form-group">
-          <label htmlFor="guest_count">Number of Guests</label>
+        <>
+          <div className="form-group">
+            <label htmlFor="guest_count">Number of Guests</label>
 
-          <div className="guest-count-stepper">
-            <button
-              type="button"
-              className="guest-count-step"
-              aria-label="Decrease guests"
-              disabled={form.guest_count <= MIN_GUESTS}
-              onClick={() => setGuestCount(form.guest_count - 1)}
-            >
-              −
-            </button>
+            <div className="guest-count-stepper">
+              <button
+                type="button"
+                className="guest-count-step"
+                aria-label="Decrease guests"
+                disabled={form.guest_count <= MIN_GUESTS}
+                onClick={() => setGuestCount(form.guest_count - 1)}
+              >
+                −
+              </button>
 
-            <input
-              id="guest_count"
-              type="number"
-              min={MIN_GUESTS}
-              max={MAX_GUESTS}
-              inputMode="numeric"
-              className="guest-count-input"
-              value={form.guest_count}
-              onChange={(e) => {
-                const value = Number(e.target.value);
-                if (Number.isNaN(value)) return;
-                setGuestCount(value);
-              }}
-            />
+              <input
+                id="guest_count"
+                type="number"
+                min={MIN_GUESTS}
+                max={MAX_GUESTS}
+                inputMode="numeric"
+                className="guest-count-input"
+                value={form.guest_count}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  if (Number.isNaN(value)) return;
+                  setGuestCount(value);
+                }}
+              />
 
-            <button
-              type="button"
-              className="guest-count-step"
-              aria-label="Increase guests"
-              disabled={form.guest_count >= MAX_GUESTS}
-              onClick={() => setGuestCount(form.guest_count + 1)}
-            >
-              +
-            </button>
+              <button
+                type="button"
+                className="guest-count-step"
+                aria-label="Increase guests"
+                disabled={form.guest_count >= MAX_GUESTS}
+                onClick={() => setGuestCount(form.guest_count + 1)}
+              >
+                +
+              </button>
+            </div>
           </div>
-        </div>
+
+          <div className="form-group">
+            <label>Which events will you attend? *</label>
+
+            <div className="event-checkboxes">
+              {EVENT_OPTIONS.map((event) => (
+                <label key={event} className="checkbox-option">
+                  <input
+                    type="checkbox"
+                    checked={form.events.includes(event)}
+                    onChange={() => toggleEvent(event)}
+                  />
+
+                  <span>{event}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        </>
       )}
 
       <div className="form-group">
